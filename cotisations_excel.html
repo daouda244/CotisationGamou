@@ -13,47 +13,166 @@
             min-height: 100vh;
             padding: 20px;
         }
-        .main-container { background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 20px; text-align: center; }
-        .title-input { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; font-size: 1.8rem; font-weight: bold; text-align: center; border-radius: 8px; padding: 10px; margin-bottom: 20px; transition: all 0.3s ease; }
-        .title-input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 20px rgba(52, 152, 219, 0.3); }
-        .title-input::placeholder { color: rgba(255,255,255,0.7); }
-        .btn-toolbar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .btn-custom { background: linear-gradient(135deg, #3498db, #2980b9); border: none; color: white; padding: 10px 15px; border-radius: 8px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); }
-        .btn-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4); color: white; }
-        .btn-success-custom { background: linear-gradient(135deg, #27ae60, #229954); box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
-        .btn-warning-custom { background: linear-gradient(135deg, #f39c12, #e67e22); box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3); }
-        .btn-danger-custom { background: linear-gradient(135deg, #e74c3c, #c0392b); box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3); }
-        .table-container { padding: 30px; max-height: 60vh; overflow-y: auto; }
-        .excel-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
-        .excel-table th { background: linear-gradient(135deg, #34495e, #2c3e50); color: white; padding: 15px; text-align: center; font-weight: 600; border-bottom: 3px solid #3498db; position: sticky; top: 0; z-index: 10; }
-        .excel-table td { padding: 12px; border-bottom: 1px solid #ecf0f1; transition: all 0.3s ease; }
-        .excel-table tbody tr:hover { background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1)); transform: scale(1.01); }
-        .excel-table input { border: 2px solid transparent; padding: 8px 12px; width: 100%; border-radius: 5px; font-size: 14px; transition: all 0.3s ease; background: rgba(52, 152, 219, 0.05); }
-        .excel-table input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.3); background: white; }
-        .delete-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; }
-        .delete-btn:hover { transform: scale(1.1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
-        .total-section { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; text-align: center; border-top: 3px solid #3498db; }
-        .total-amount { font-size: 2rem; font-weight: bold; color: #2c3e50; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
-        .add-row-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #27ae60, #229954); color: white; border: none; font-size: 24px; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4); transition: all 0.3s ease; z-index: 1000; }
-        .add-row-btn:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 15px 40px rgba(39, 174, 96, 0.6); }
-        @media (max-width: 768px) {
-            .btn-toolbar { flex-direction: column; align-items: center; }
-            .btn-custom { width: 200px; margin-bottom: 5px; }
-            .table-container { padding: 15px; }
-            .excel-table th, .excel-table td { padding: 8px; font-size: 12px; }
+
+        .main-container {
+            background: #f4f4f4;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .title-input {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .title-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .btn-toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .btn-warning-custom {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .table-container {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .excel-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .excel-table th {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .excel-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .excel-table input {
+            border: 2px solid transparent;
+            padding: 8px 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 14px;
+            background: rgba(52, 152, 219, 0.05);
+            color: #2c3e50;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .total-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            text-align: center;
+            border-top: 3px solid #3498db;
+        }
+
+        .total-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .add-row-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            border: none;
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-toolbar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-custom {
+                width: 200px;
+                margin-bottom: 5px;
+            }
+
+            .excel-table th, .excel-table td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid">
-        <div class="main-container fade-in">
-            <!-- Header avec titre et boutons -->
+        <div class="main-container">
             <div class="header">
                 <input type="text" id="tableTitle" class="title-input w-100" placeholder="Titre du tableau de cotisations" value="Tableau des Cotisations">
-                
                 <div class="btn-toolbar">
                     <button class="btn btn-custom btn-success-custom" onclick="saveData(this)">
                         <i class="fas fa-save"></i> Enregistrer
@@ -75,25 +194,21 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Tableau -->
+
             <div class="table-container" id="tableContainer">
                 <table class="excel-table" id="cotisationsTable">
                     <thead>
                         <tr>
-                            <th style="width: 5%">#</th>
-                            <th style="width: 40%">Nom du Membre</th>
-                            <th style="width: 35%">Montant Cotisé (FCFA)</th>
-                            <th style="width: 20%">Actions</th>
+                            <th>#</th>
+                            <th>Nom du Membre</th>
+                            <th>Montant Cotisé (FCFA)</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Les lignes seront ajoutées dynamiquement -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
-            
-            <!-- Section Total -->
+
             <div class="total-section">
                 <h3>Total des Cotisations</h3>
                 <p class="total-amount" id="totalAmount">0 FCFA</p>
@@ -101,21 +216,19 @@
             </div>
         </div>
     </div>
-    
-    <!-- Bouton flottant pour ajouter une ligne -->
+
     <button class="add-row-btn" onclick="addRow()" title="Ajouter un membre">
         <i class="fas fa-plus"></i>
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+
     <script>
         let tableData = [];
         let rowCounter = 1;
         let isModifyMode = false;
 
-        // Initialiser le tableau avec quelques lignes par défaut
         function initializeTable() {
             addRow();
             addRow();
@@ -123,241 +236,10 @@
             loadData();
         }
 
-        // Ajouter une nouvelle ligne
         function addRow() {
             const tableBody = document.getElementById('tableBody');
             const row = document.createElement('tr');
-            row.className = 'fade-in';
-            
             row.innerHTML = `
                 <td class="text-center">${rowCounter}</td>
                 <td><input type="text" placeholder="Nom du membre" oninput="updateTotal()"></td>
-                <td><input type="number" placeholder="0" min="0" step="1000" oninput="updateTotal()"></td>
-                <td class="text-center">
-                    <button class="delete-btn" onclick="deleteRow(this)" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            
-            tableBody.appendChild(row);
-            rowCounter++;
-            updateRowNumbers();
-            updateTotal();
-        }
-
-        // Supprimer une ligne
-        function deleteRow(button) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
-                const row = button.closest('tr');
-                row.style.animation = 'fadeOut 0.3s ease-out';
-                setTimeout(() => {
-                    row.remove();
-                    updateRowNumbers();
-                    updateTotal();
-                }, 300);
-            }
-        }
-
-        // Mettre à jour les numéros de ligne
-        function updateRowNumbers() {
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach((row, index) => {
-                row.children[0].textContent = index + 1;
-            });
-        }
-
-        // Calculer et afficher le total
-        function updateTotal() {
-            const rows = document.querySelectorAll('#tableBody tr');
-            let total = 0;
-            let memberCount = 0;
-
-            rows.forEach(row => {
-                const nameInput = row.children[1].querySelector('input');
-                const amountInput = row.children[2].querySelector('input');
-                
-                if (nameInput.value.trim() !== '') {
-                    memberCount++;
-                }
-                
-                const amount = parseFloat(amountInput.value) || 0;
-                total += amount;
-            });
-
-            document.getElementById('totalAmount').textContent = total.toLocaleString('fr-FR') + ' FCFA';
-            document.getElementById('memberCount').textContent = memberCount;
-        }
-
-        // Sauvegarder les données
-        function saveData(btn) {
-            const title = document.getElementById('tableTitle').value;
-            const rows = document.querySelectorAll('#tableBody tr');
-            const data = [];
-
-            rows.forEach(row => {
-                const nameInput = row.children[1].querySelector('input');
-                const amountInput = row.children[2].querySelector('input');
-                
-                if (nameInput.value.trim() !== '' || amountInput.value !== '') {
-                    data.push({
-                        name: nameInput.value,
-                        amount: parseFloat(amountInput.value) || 0
-                    });
-                }
-            });
-
-            const tableInfo = {
-                title: title,
-                data: data,
-                timestamp: new Date().toISOString()
-            };
-
-            // Simulation de sauvegarde (en réalité, on stocke en mémoire)
-            tableData = tableInfo;
-            
-            // Animation de confirmation
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Sauvegardé!';
-            btn.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
-            }, 2000);
-
-            console.log('Données sauvegardées:', tableInfo);
-        }
-
-        // Charger les données
-        function loadData() {
-            if (tableData && tableData.data) {
-                document.getElementById('tableTitle').value = tableData.title || 'Tableau des Cotisations';
-                
-                // Vider le tableau actuel
-                document.getElementById('tableBody').innerHTML = '';
-                rowCounter = 1;
-
-                // Ajouter les données sauvegardées
-                tableData.data.forEach(item => {
-                    const tableBody = document.getElementById('tableBody');
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td class="text-center">${rowCounter}</td>
-                        <td><input type="text" value="${item.name}" oninput="updateTotal()"></td>
-                        <td><input type="number" value="${item.amount}" min="0" step="1000" oninput="updateTotal()"></td>
-                        <td class="text-center">
-                            <button class="delete-btn" onclick="deleteRow(this)" title="Supprimer">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                    rowCounter++;
-                });
-
-                updateTotal();
-            }
-        }
-
-        // Télécharger comme image
-        function downloadImage() {
-            const element = document.querySelector('.main-container');
-            const addBtn = document.querySelector('.add-row-btn');
-            addBtn.style.display = 'none'; // Cacher le bouton flottant
-
-            html2canvas(element, {
-                backgroundColor: '#ffffff',
-                scale: 2,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                const title = document.getElementById('tableTitle').value || 'tableau_cotisations';
-                link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
-                link.href = canvas.toDataURL();
-                link.click();
-                
-                addBtn.style.display = 'block'; // Remettre le bouton flottant
-            });
-        }
-
-        // Mettre à jour toutes les informations
-        function updateAll(btn) {
-            updateRowNumbers();
-            updateTotal();
-            
-            // Animation de confirmation
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Mis à jour!';
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-            }, 2000);
-        }
-
-        // Activer/désactiver le mode modification
-        function modifyTable(btn) {
-            isModifyMode = !isModifyMode;
-            const inputs = document.querySelectorAll('#cotisationsTable input');
-            
-            if (isModifyMode) {
-                inputs.forEach(input => {
-                    input.style.background = 'rgba(243, 156, 18, 0.1)';
-                    input.style.borderColor = '#f39c12';
-                });
-                btn.innerHTML = '<i class="fas fa-lock"></i> Verrouiller';
-                btn.className = 'btn btn-custom btn-warning-custom';
-            } else {
-                inputs.forEach(input => {
-                    input.style.background = 'rgba(52, 152, 219, 0.05)';
-                    input.style.borderColor = 'transparent';
-                });
-                btn.innerHTML = '<i class="fas fa-edit"></i> Modifier';
-                btn.className = 'btn btn-custom';
-            }
-        }
-
-        // Créer un nouveau tableau
-        function createNew() {
-            if (confirm('Créer un nouveau tableau ? (Les données actuelles seront perdues si non sauvegardées)')) {
-                document.getElementById('tableTitle').value = 'Nouveau Tableau de Cotisations';
-                document.getElementById('tableBody').innerHTML = '';
-                rowCounter = 1;
-                tableData = [];
-                
-                // Ajouter quelques lignes vides
-                addRow();
-                addRow();
-                addRow();
-            }
-        }
-
-        // Effacer tout le tableau
-        function clearTable() {
-            if (confirm('Effacer toutes les données du tableau ?')) {
-                const inputs = document.querySelectorAll('#cotisationsTable input');
-                inputs.forEach(input => {
-                    input.value = '';
-                });
-                updateTotal();
-            }
-        }
-
-        // Initialiser le tableau au chargement de la page
-        window.addEventListener('load', initializeTable);
-
-        // Animation CSS pour la suppression
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; transform: scale(1); }
-                to { opacity: 0; transform: scale(0.8); }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
-</body>
-</html>
+                <td><input type="number" placeholder="0"
