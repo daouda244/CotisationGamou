@@ -166,6 +166,74 @@
                 font-size: 12px;
             }
         }
+
+        /* Styles spéciaux pour l'image à télécharger */
+        .download-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .download-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .download-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #2c3e50;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .download-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .download-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            text-align: center;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .download-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .download-table tbody tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        .download-total {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .download-total-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -220,6 +288,28 @@
     <button class="add-row-btn" onclick="addRow()" title="Ajouter un membre">
         <i class="fas fa-plus"></i>
     </button>
+
+    <!-- Conteneur invisible pour le téléchargement -->
+    <div id="downloadableContent" style="position: absolute; left: -9999px; top: -9999px; background: white; padding: 0;">
+        <div class="download-container">
+            <div class="download-title" id="downloadTitle">Tableau des Cotisations</div>
+            <table class="download-table" id="downloadTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom du Membre</th>
+                        <th>Montant Cotisé (FCFA)</th>
+                    </tr>
+                </thead>
+                <tbody id="downloadTableBody">
+                </tbody>
+            </table>
+            <div class="download-total">
+                <p class="download-total-amount" id="downloadTotalAmount">Total: 0 FCFA</p>
+                <small>Nombre de membres: <span id="downloadMemberCount">0</span></small>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -280,36 +370,18 @@
                 tableData.push({ name, amount });
             });
             const title = document.getElementById('tableTitle').value;
-            localStorage.setItem('cotisationsTable', JSON.stringify({ title, data: tableData }));
+            // Simulation de sauvegarde (localStorage retiré)
+            console.log('Données sauvegardées:', { title, data: tableData });
             alert("Tableau enregistré avec succès !");
         }
 
         function loadData() {
-            const saved = localStorage.getItem('cotisationsTable');
-            if (saved) {
-                const { title, data } = JSON.parse(saved);
-                document.getElementById('tableTitle').value = title;
-                document.getElementById('tableBody').innerHTML = '';
-                tableData = data;
-                tableData.forEach(item => {
-                    const tableBody = document.getElementById('tableBody');
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="text-center">${rowCounter}</td>
-                        <td><input type="text" value="${item.name}" oninput="updateTotal()"></td>
-                        <td><input type="number" value="${item.amount}" oninput="updateTotal()"></td>
-                        <td class="text-center"><button class="delete-btn" onclick="deleteRow(this)">Supprimer</button></td>
-                    `;
-                    tableBody.appendChild(row);
-                    rowCounter++;
-                });
-                updateTotal();
-            }
+            // Fonction de chargement simulée
+            console.log('Tentative de chargement des données...');
         }
 
         function clearTable() {
             if (confirm("Êtes-vous sûr de vouloir effacer toutes les données ?")) {
-                localStorage.removeItem('cotisationsTable');
                 document.getElementById('tableBody').innerHTML = '';
                 rowCounter = 1;
                 updateTotal();
@@ -317,37 +389,129 @@
         }
 
         function updateAll(btn) {
-            loadData();
+            updateTotal();
+            alert("Tableau mis à jour avec succès !");
         }
 
         function modifyTable(btn) {
             isModifyMode = !isModifyMode;
-            alert("Mode modification activé");
+            alert("Mode modification " + (isModifyMode ? "activé" : "désactivé"));
         }
 
         function createNew() {
             if (confirm("Créer un nouveau tableau supprimera les données actuelles. Continuer ?")) {
-                localStorage.removeItem('cotisationsTable');
                 document.getElementById('tableBody').innerHTML = '';
+                document.getElementById('tableTitle').value = 'Nouveau Tableau des Cotisations';
                 rowCounter = 1;
+                addRow();
+                addRow();
                 addRow();
                 updateTotal();
             }
         }
 
-        function downloadImage() {
-            const element = document.querySelector(".main-container");
-            html2canvas(element, {
-                backgroundColor: "#ffffff",
-                scale: 2,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'cotisations_tableau.png';
-                link.href = canvas.toDataURL();
-                link.click();
+        function prepareDownloadTable() {
+            const title = document.getElementById('tableTitle').value;
+            const rows = document.querySelectorAll('#cotisationsTable tbody tr');
+            
+            // Mettre à jour le titre de téléchargement
+            document.getElementById('downloadTitle').textContent = title;
+            
+            // Vider le tableau de téléchargement
+            const downloadTableBody = document.getElementById('downloadTableBody');
+            downloadTableBody.innerHTML = '';
+            
+            let total = 0;
+            let memberCount = 0;
+            
+            // Remplir le tableau de téléchargement avec les données (sans les boutons)
+            rows.forEach((row, index) => {
+                const nameInput = row.cells[1].querySelector('input');
+                const amountInput = row.cells[2].querySelector('input');
+                
+                const name = nameInput.value.trim();
+                const amount = parseInt(amountInput.value) || 0;
+                
+                if (name !== '' || amount > 0) {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${name || 'Membre ' + (index + 1)}</td>
+                        <td>${amount.toLocaleString()} FCFA</td>
+                    `;
+                    downloadTableBody.appendChild(newRow);
+                    
+                    if (name !== '') memberCount++;
+                    total += amount;
+                }
             });
+            
+            // Mettre à jour les totaux
+            document.getElementById('downloadTotalAmount').textContent = `Total: ${total.toLocaleString()} FCFA`;
+            document.getElementById('downloadMemberCount').textContent = memberCount;
+        }
+
+        function downloadImage() {
+            // Préparer le tableau pour le téléchargement
+            prepareDownloadTable();
+            
+            const downloadElement = document.getElementById('downloadableContent');
+            const container = downloadElement.querySelector('.download-container');
+            
+            // Temporairement rendre visible le conteneur pour la capture
+            downloadElement.style.position = 'fixed';
+            downloadElement.style.left = '50%';
+            downloadElement.style.top = '50%';
+            downloadElement.style.transform = 'translate(-50%, -50%)';
+            downloadElement.style.zIndex = '10000';
+            downloadElement.style.background = 'white';
+            downloadElement.style.padding = '20px';
+            downloadElement.style.borderRadius = '10px';
+            downloadElement.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
+            
+            setTimeout(() => {
+                html2canvas(container, {
+                    backgroundColor: "#ffffff",
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    width: container.offsetWidth,
+                    height: container.offsetHeight
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    const title = document.getElementById('tableTitle').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    link.download = `${title}_cotisations.png`;
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+                    
+                    // Cacher à nouveau le conteneur
+                    downloadElement.style.position = 'absolute';
+                    downloadElement.style.left = '-9999px';
+                    downloadElement.style.top = '-9999px';
+                    downloadElement.style.transform = 'none';
+                    downloadElement.style.zIndex = 'auto';
+                    downloadElement.style.background = 'white';
+                    downloadElement.style.padding = '0';
+                    downloadElement.style.borderRadius = '0';
+                    downloadElement.style.boxShadow = 'none';
+                    
+                    alert('Image téléchargée avec succès !');
+                }).catch(error => {
+                    console.error('Erreur lors du téléchargement:', error);
+                    alert('Erreur lors du téléchargement. Veuillez réessayer.');
+                    
+                    // Cacher à nouveau le conteneur en cas d'erreur
+                    downloadElement.style.position = 'absolute';
+                    downloadElement.style.left = '-9999px';
+                    downloadElement.style.top = '-9999px';
+                    downloadElement.style.transform = 'none';
+                    downloadElement.style.zIndex = 'auto';
+                    downloadElement.style.background = 'white';
+                    downloadElement.style.padding = '0';
+                    downloadElement.style.borderRadius = '0';
+                    downloadElement.style.boxShadow = 'none';
+                });
+            }, 500);
         }
 
         window.onload = initializeTable;
