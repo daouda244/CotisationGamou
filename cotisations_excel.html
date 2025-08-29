@@ -242,4 +242,115 @@
             row.innerHTML = `
                 <td class="text-center">${rowCounter}</td>
                 <td><input type="text" placeholder="Nom du membre" oninput="updateTotal()"></td>
-                <td><input type="number" placeholder="0"
+                <td><input type="number" placeholder="0" value="0" oninput="updateTotal()"></td>
+                <td class="text-center"><button class="delete-btn" onclick="deleteRow(this)">Supprimer</button></td>
+            `;
+            tableBody.appendChild(row);
+            rowCounter++;
+            updateTotal();
+        }
+
+        function deleteRow(btn) {
+            const row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let total = 0;
+            let count = 0;
+            const rows = document.querySelectorAll('#cotisationsTable tbody tr');
+            rows.forEach((row, index) => {
+                const montant = row.cells[2].querySelector('input').value;
+                const parsed = parseInt(montant, 10);
+                if (!isNaN(parsed)) total += parsed;
+                row.cells[0].textContent = index + 1;
+                count++;
+            });
+            document.getElementById('totalAmount').textContent = `${total.toLocaleString()} FCFA`;
+            document.getElementById('memberCount').textContent = count;
+        }
+
+        function saveData(btn) {
+            const rows = document.querySelectorAll('#cotisationsTable tbody tr');
+            tableData = [];
+            rows.forEach(row => {
+                const name = row.cells[1].querySelector('input').value;
+                const amount = row.cells[2].querySelector('input').value;
+                tableData.push({ name, amount });
+            });
+            const title = document.getElementById('tableTitle').value;
+            localStorage.setItem('cotisationsTable', JSON.stringify({ title, data: tableData }));
+            alert("Tableau enregistré avec succès !");
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('cotisationsTable');
+            if (saved) {
+                const { title, data } = JSON.parse(saved);
+                document.getElementById('tableTitle').value = title;
+                document.getElementById('tableBody').innerHTML = '';
+                tableData = data;
+                tableData.forEach(item => {
+                    const tableBody = document.getElementById('tableBody');
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-center">${rowCounter}</td>
+                        <td><input type="text" value="${item.name}" oninput="updateTotal()"></td>
+                        <td><input type="number" value="${item.amount}" oninput="updateTotal()"></td>
+                        <td class="text-center"><button class="delete-btn" onclick="deleteRow(this)">Supprimer</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                    rowCounter++;
+                });
+                updateTotal();
+            }
+        }
+
+        function clearTable() {
+            if (confirm("Êtes-vous sûr de vouloir effacer toutes les données ?")) {
+                localStorage.removeItem('cotisationsTable');
+                document.getElementById('tableBody').innerHTML = '';
+                rowCounter = 1;
+                updateTotal();
+            }
+        }
+
+        function updateAll(btn) {
+            loadData();
+        }
+
+        function modifyTable(btn) {
+            isModifyMode = !isModifyMode;
+            alert("Mode modification activé");
+        }
+
+        function createNew() {
+            if (confirm("Créer un nouveau tableau supprimera les données actuelles. Continuer ?")) {
+                localStorage.removeItem('cotisationsTable');
+                document.getElementById('tableBody').innerHTML = '';
+                rowCounter = 1;
+                addRow();
+                updateTotal();
+            }
+        }
+
+        function downloadImage() {
+            const element = document.querySelector(".main-container");
+            html2canvas(element, {
+                backgroundColor: "#ffffff",
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'cotisations_tableau.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        window.onload = initializeTable;
+    </script>
+</body>
+</html>
