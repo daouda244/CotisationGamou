@@ -311,6 +311,9 @@
                     <button class="btn btn-custom" onclick="downloadImage()">
                         <i class="fas fa-download"></i> Télécharger Image
                     </button>
+                    <button class="btn btn-custom" onclick="testDownload()" style="background: #9b59b6;">
+                        <i class="fas fa-bug"></i> Test Debug
+                    </button>
                     <button class="btn btn-custom btn-warning-custom" onclick="updateAll(this)">
                         <i class="fas fa-sync"></i> Mettre à jour
                     </button>
@@ -484,8 +487,10 @@
             const title = document.getElementById('tableTitle').value;
             const rows = document.querySelectorAll('#cotisationsTable tbody tr');
             
+            console.log('Préparation du tableau:', title, 'avec', rows.length, 'lignes');
+            
             // Mettre à jour le titre de téléchargement
-            document.getElementById('downloadTitle').textContent = title;
+            document.getElementById('downloadTitle').textContent = title || 'Tableau des Cotisations';
             
             // Vider le tableau de téléchargement
             const downloadTableBody = document.getElementById('downloadTableBody');
@@ -499,26 +504,34 @@
                 const nameInput = row.cells[1].querySelector('input');
                 const amountInput = row.cells[2].querySelector('input');
                 
+                if (!nameInput || !amountInput) {
+                    console.warn('Éléments manquants dans la ligne', index);
+                    return;
+                }
+                
                 const name = nameInput.value.trim();
                 const amount = parseInt(amountInput.value) || 0;
                 
-                if (name !== '' || amount > 0) {
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `
-                        <td style="font-weight: 600;">${index + 1}</td>
-                        <td style="text-align: left; font-weight: 500;">${name || 'Membre ' + (index + 1)}</td>
-                        <td style="font-weight: 600; color: #27ae60;">${amount.toLocaleString()} FCFA</td>
-                    `;
-                    downloadTableBody.appendChild(newRow);
-                    
-                    if (name !== '') memberCount++;
-                    total += amount;
-                }
+                console.log(`Ligne ${index + 1}:`, name, amount);
+                
+                // Ajouter toutes les lignes, même vides, pour le debug
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td style="font-weight: 600;">${index + 1}</td>
+                    <td style="text-align: left; font-weight: 500;">${name || 'Membre ' + (index + 1)}</td>
+                    <td style="font-weight: 600; color: #27ae60;">${amount.toLocaleString()} FCFA</td>
+                `;
+                downloadTableBody.appendChild(newRow);
+                
+                if (name !== '') memberCount++;
+                total += amount;
             });
             
             // Mettre à jour les totaux
             document.getElementById('downloadTotalAmount').textContent = `Total: ${total.toLocaleString()} FCFA`;
             document.getElementById('downloadMemberCount').textContent = memberCount;
+            
+            console.log('Tableau préparé - Total:', total, 'Membres:', memberCount);
         }
 
         function downloadImage() {
@@ -532,83 +545,68 @@
             const downloadElement = document.getElementById('downloadableContent');
             const container = downloadElement.querySelector('.download-container');
             
-            // Calculer la hauteur nécessaire en fonction du nombre de lignes
-            const rowCount = document.querySelectorAll('#downloadTableBody tr').length;
-            const baseHeight = 400; // Hauteur de base (titre + en-têtes + total)
-            const rowHeight = 55; // Hauteur approximative par ligne
-            const calculatedHeight = baseHeight + (rowCount * rowHeight);
-            
-            // Ajuster la taille du conteneur
-            container.style.minHeight = `${Math.max(calculatedHeight, 600)}px`;
-            
-            // Temporairement rendre visible le conteneur pour la capture
+            // Temporairement afficher le conteneur dans la page pour le debug
             downloadElement.style.position = 'fixed';
-            downloadElement.style.left = '50%';
-            downloadElement.style.top = '50%';
-            downloadElement.style.transform = 'translate(-50%, -50%)';
+            downloadElement.style.left = '50px';
+            downloadElement.style.top = '50px';
+            downloadElement.style.transform = 'none';
             downloadElement.style.zIndex = '9999';
             downloadElement.style.background = 'white';
-            downloadElement.style.padding = '0';
-            downloadElement.style.borderRadius = '0';
-            downloadElement.style.boxShadow = 'none';
+            downloadElement.style.padding = '20px';
+            downloadElement.style.borderRadius = '10px';
+            downloadElement.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
             
             setTimeout(() => {
                 html2canvas(container, {
                     backgroundColor: "#ffffff",
-                    scale: 3, // Augmenté pour une meilleure qualité
+                    scale: 2,
                     useCORS: true,
-                    allowTaint: true,
+                    allowTaint: false,
+                    logging: true,
                     width: container.offsetWidth,
-                    height: container.offsetHeight,
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: container.offsetWidth,
-                    windowHeight: container.offsetHeight,
-                    foreignObjectRendering: true,
-                    logging: false
+                    height: container.offsetHeight
                 }).then(canvas => {
-                    // Créer un canvas avec des dimensions optimisées
-                    const finalCanvas = document.createElement('canvas');
-                    const ctx = finalCanvas.getContext('2d');
+                    console.log('Canvas généré:', canvas.width, 'x', canvas.height);
                     
-                    // Définir la taille finale (format A4 en pixels à 300 DPI)
-                    const finalWidth = Math.max(canvas.width, 2480); // Largeur minimum
-                    const finalHeight = canvas.height;
+                    // Vérifier que le canvas n'est pas vide
+                    if (canvas.width === 0 || canvas.height === 0) {
+                        throw new Error('Canvas vide généré');
+                    }
                     
-                    finalCanvas.width = finalWidth;
-                    finalCanvas.height = finalHeight;
-                    
-                    // Fond blanc
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, finalWidth, finalHeight);
-                    
-                    // Centrer l'image
-                    const x = (finalWidth - canvas.width) / 2;
-                    ctx.drawImage(canvas, x, 0);
-                    
-                    // Télécharger l'image
+                    // Télécharger directement le canvas
                     const link = document.createElement('a');
-                    const title = document.getElementById('tableTitle').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                    const date = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
-                    link.download = `${title}_cotisations_${date}.png`;
-                    link.href = finalCanvas.toDataURL('image/png', 1.0);
-                    link.click();
+                    const title = document.getElementById('tableTitle').value.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
+                    const now = new Date();
+                    const timestamp = now.getFullYear() + '-' + 
+                                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                                    String(now.getDate()).padStart(2, '0') + '_' +
+                                    String(now.getHours()).padStart(2, '0') + 'h' +
+                                    String(now.getMinutes()).padStart(2, '0');
                     
-                    // Cacher à nouveau le conteneur
+                    link.download = `${title || 'cotisations'}_${timestamp}.png`;
+                    link.href = canvas.toDataURL('image/png', 0.95);
+                    
+                    // Forcer le téléchargement
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Cacher le conteneur
                     hideDownloadContainer();
                     
                     // Masquer le loading
                     loadingOverlay.classList.remove('show');
                     
-                    alert('Image téléchargée avec succès !\nRésolution optimisée pour l\'impression.');
+                    console.log('Téléchargement terminé');
+                    alert('Image téléchargée avec succès !');
                     
                 }).catch(error => {
-                    console.error('Erreur lors du téléchargement:', error);
+                    console.error('Erreur détaillée:', error);
                     hideDownloadContainer();
                     loadingOverlay.classList.remove('show');
-                    alert('Erreur lors du téléchargement. Veuillez réessayer.');
+                    alert('Erreur lors du téléchargement: ' + error.message + '\nVérifiez la console pour plus de détails.');
                 });
-            }, 800); // Délai augmenté pour s'assurer que le rendu est complet
+            }, 1000);
         }
 
         function hideDownloadContainer() {
@@ -622,6 +620,42 @@
             downloadElement.style.padding = '0';
             downloadElement.style.borderRadius = '0';
             downloadElement.style.boxShadow = 'none';
+        }
+
+        function testDownload() {
+            console.log('=== TEST DE DEBUG ===');
+            
+            // Vérifier si html2canvas est chargé
+            if (typeof html2canvas === 'undefined') {
+                alert('html2canvas n\'est pas chargé !');
+                return;
+            }
+            
+            // Préparer le tableau
+            prepareDownloadTable();
+            
+            // Afficher temporairement le conteneur pour inspection
+            const downloadElement = document.getElementById('downloadableContent');
+            const container = downloadElement.querySelector('.download-container');
+            
+            downloadElement.style.position = 'fixed';
+            downloadElement.style.left = '50px';
+            downloadElement.style.top = '50px';
+            downloadElement.style.zIndex = '10000';
+            downloadElement.style.background = 'white';
+            downloadElement.style.padding = '20px';
+            downloadElement.style.border = '2px solid red';
+            
+            console.log('Conteneur affiché pour inspection');
+            console.log('Largeur:', container.offsetWidth, 'Hauteur:', container.offsetHeight);
+            
+            // Laisser 5 secondes pour inspecter, puis cacher
+            setTimeout(() => {
+                hideDownloadContainer();
+                console.log('Test terminé - conteneur caché');
+            }, 5000);
+            
+            alert('Le tableau sera affiché 5 secondes pour inspection.\nOuvrez la console pour voir les logs.');
         }
 
         window.onload = initializeTable;
